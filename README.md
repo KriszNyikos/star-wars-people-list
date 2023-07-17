@@ -9,7 +9,7 @@ List of used technologies:
 Expectations:  
 - Overall
   - [x] The app needs to show a list from the API ( from the /people endpoint).
-  - [ ] The list has to be paginated.
+  - [x] The list has to be paginated.
   - [ ] An animation has to be shown until the data is successfully downloaded.
   - [x] We need to inform the user if the htpp request fails.
 ---
