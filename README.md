@@ -8,10 +8,10 @@ List of used technologies:
 
 Expectations:  
 - Overall
-  - [ ] The app needs to show a list from the API ( from the /people endpoint).
+  - [x] The app needs to show a list from the API ( from the /people endpoint).
   - [ ] The list has to be paginated.
   - [ ] An animation has to be shown until the data is successfully downloaded.
-  - [ ] We need to inform the user if the htpp request fails.
+  - [x] We need to inform the user if the htpp request fails.
 ---
 - Card
   - [ ] All movie characters have to be wrapped in a card.
