@@ -23,8 +23,8 @@ Expectations:
   - [ ] Modal has to store personal details.
 ---
 - Search
-  - [ ] There needs to be a search bar with a text input.
-  - [ ] The user can search for names with this input.
+  - [x] There needs to be a search bar with a text input.
+  - [x] The user can search for names with this input.
 ---
 - Optional
   - [ ] The search bar should be extended with two dropdown list. ('/films' and '/planets')

@@ -1,13 +1,22 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, KeyboardEvent } from "react";
 import Error from "next/error";
 import Pagination from "@/app/components/pagination";
 import Card from "../app/components/card";
 import Head from "next/head";
+import { useRouter } from "next/router";
+
 
 export async function getServerSideProps({ query }: any) {
   //TODO move to separate file
-  const { page } = query;
-  const response = await fetch(`https://swapi.dev/api/people?page=${page}`);
+  const { page, search } = query;
+  let url = ""
+  if(search){
+    url = `https://swapi.dev/api/people?search=${search}&page=${page}`
+  } else {
+    url = `https://swapi.dev/api/people?page=${page}`
+  }
+
+  const response = await fetch(url);
   const errorCode = response.ok ? false : response.status;
   const peopleList = response.ok ? await response.json() : null;
 
@@ -15,12 +24,15 @@ export async function getServerSideProps({ query }: any) {
     errorCode,
     peopleList,
     currentPage: parseInt(page) || 1,
+    search: search || null
   };
 
   return { props: { ...props } };
 }
 
-export default function List({ errorCode, peopleList, currentPage }: any) {
+export default function List({ errorCode, peopleList, currentPage, search }: any) {
+  const router = useRouter()
+  const [searchText, setSearchText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const [paginationState, setPaginationState] = useState({
@@ -28,9 +40,19 @@ export default function List({ errorCode, peopleList, currentPage }: any) {
     currentPage: 1,
   });
 
-  const onPageChange = () => {
+
+  const onPageChange = (page: number) => {
+    const url = searchText ? `/list?search=${searchText}&page=${page}` : `/list?page=${page}`
+    router.push(url)
     setIsLoading(true);
   };
+
+  const onClickSubmit = () => {
+    const url = searchText ? `/list?search=${searchText}&page=${1}` : `/list?page=${1}`
+    router.push(url)
+    setIsLoading(true);
+  };
+
 
   useEffect(() => {
     setIsLoading(false);
@@ -39,7 +61,12 @@ export default function List({ errorCode, peopleList, currentPage }: any) {
       count: peopleList?.count,
       currentPage: currentPage,
     });
-  }, [peopleList, errorCode]);
+    if(search){
+      setSearchText(search);
+    }
+    
+  }, [peopleList, errorCode, search]);
+
 
   if (errorCode) return <Error statusCode={errorCode} />;
 
@@ -50,6 +77,22 @@ export default function List({ errorCode, peopleList, currentPage }: any) {
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-between p-24">
         <div className="container h-100">
+          <div>
+
+              <input
+                onChange={(e) => setSearchText(e.target.value)}
+                type="text"
+                value={searchText}
+                name="character_name"
+                className="bg-gray-50 border border-gray-700 text-gray-900 focus:outline-none text-sm rounded-lg block w-1/5 p-2.5 "
+                placeholder="Character name"
+              />
+              <button onClick={onClickSubmit} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 border border-blue-700 rounded">
+                Submit
+              </button>
+
+          </div>
+          
           <div className="flex justify-center relative">
             {isLoading ? (
               <div
@@ -79,9 +122,9 @@ export default function List({ errorCode, peopleList, currentPage }: any) {
             <div>
               <div className="flex flex-wrap">
                 {peopleList
-                  ? peopleList?.results?.map((person: any) => (
-                      <div key={person.name}>
-                        <Card characterName={person.name} />
+                  ? peopleList?.results?.map((person: any, index: number) => (
+                      <div key={index}>
+                        <Card characterName={person.name} index={index} />
                       </div>
                     ))
                   : null}
@@ -90,11 +133,14 @@ export default function List({ errorCode, peopleList, currentPage }: any) {
           </div>
 
           <div className="flex justify-center">
-            <Pagination
+            {
+              peopleList && peopleList?.results?.length > 0 ? <Pagination
               count={paginationState.count}
               currentPage={paginationState.currentPage}
               onPageChange={onPageChange}
-            />
+            /> : null
+            }
+            
           </div>
         </div>
       </main>

@@ -16,45 +16,34 @@ export default function Pagination({
   return (
     <div>
       {
-        <Link
-          href={`/list?page=${currentPage - 1}`}
-          key={currentPage - 1}
-          onClick={() => onPageChange(currentPage - 1)}
+        <button
+          disabled={currentPage === 1}
+          className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-l disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400"
         >
-          <button
-            disabled={currentPage === 1}
-            className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-l disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400"
-          >
-            prev
-          </button>
-        </Link>
+          prev
+        </button>
       }
 
       {pages.map((page) => {
         return (
-          <Link href={`/list?page=${page}`} key={page}>
-            <button
-              className={`bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 ${page === currentPage &&"bg-gray-400"}` }
-              onClick={() => onPageChange(page)}
-            >
-              {page}
-            </button>
-          </Link>
+          <button
+            key={page}
+            className={`bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 ${
+              page === currentPage && "bg-gray-400"
+            }`}
+            onClick={() => onPageChange(page)}
+          >
+            {page}
+          </button>
         );
       })}
       {
-        <Link
-          href={`/list?page=${currentPage + 1}`}
-          key={currentPage + 1}
-          onClick={() => onPageChange(currentPage + 1)}
+        <button
+          disabled={currentPage === pagesCount}
+          className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-r disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400"
         >
-          <button
-            disabled={currentPage === pagesCount}
-            className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-r disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400"
-          >
-            next
-          </button>
-        </Link>
+          next
+        </button>
       }
     </div>
   );
