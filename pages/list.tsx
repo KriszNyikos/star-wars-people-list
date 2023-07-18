@@ -1,7 +1,8 @@
-import Link from "next/link";
+
 import { useEffect, useState } from "react";
 import Error from "next/error";
 import Pagination from "@/app/components/pagination";
+import Card from '../app/components/card'
 
 export async function getServerSideProps({ query }: any) {
   //TODO move to separate file
@@ -45,7 +46,9 @@ export default function List({ errorCode, peopleList, currentPage, next, prev }:
       <div>{isLoading ? "Loading..." : null}</div>
       {peopleList
         ? peopleList?.results?.map((person: any) => (
-            <div key={person.name}>{person.name}</div>
+            <div key={person.name}>
+                <Card characterName={person.name}/>
+            </div>
           ))
         : null}
 
