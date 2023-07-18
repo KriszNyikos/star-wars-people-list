@@ -10,12 +10,12 @@ Expectations:
 - Overall
   - [x] The app needs to show a list from the API ( from the /people endpoint).
   - [x] The list has to be paginated.
-  - [ ] An animation has to be shown until the data is successfully downloaded.
+  - [x] An animation has to be shown until the data is successfully downloaded.
   - [x] We need to inform the user if the htpp request fails.
 ---
 - Card
-  - [ ] All movie characters have to be wrapped in a card.
-  - [ ] All cards have the name of the character and a random picture from https://picsum.photos/ as the profile picture.
+  - [x] All movie characters have to be wrapped in a card.
+  - [x] All cards have the name of the character and a random picture from https://picsum.photos/ as the profile picture.
   - [ ] Card should be animated if the user hovers the mouse over.
 ---
 - Modal
