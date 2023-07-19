@@ -17,6 +17,7 @@ export default function Pagination({
     <div>
       {
         <button
+          onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
           className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-l disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400"
         >
@@ -39,6 +40,7 @@ export default function Pagination({
       })}
       {
         <button
+        onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === pagesCount}
           className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-r disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400"
         >
