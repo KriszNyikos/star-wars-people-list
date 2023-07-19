@@ -1,46 +1,7 @@
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import LoadingSpinner from "./loading-spinner";
-
-export interface homeWorld {
-  name: string;
-  terrain: string;
-  climate: string;
-}
-
-export interface CharacterModalProps {
-  name: string;
-  mass: string;
-  height: string;
-  birtnYear: string;
-  countOfFilms: number;
-  homeWorldData?: homeWorld;
-}
-
-//TODO move to utils
-const mapApiResponseToCharacterModalProps = async (
-  character: any
-):  Promise<CharacterModalProps> => {
-
-  const homeWorldData = await getHomeworldData(character.homeworld)
-  return {
-    name: character.name,
-    birtnYear: character.birth_year,
-    height: character.height,
-    mass: character.mass,
-    homeWorldData,
-    countOfFilms: character.films.length,
-  };
-};
-
-const getHomeworldData = async (homeworldUrls: string): Promise<homeWorld> => {
-  return fetch(homeworldUrls).then((res) => res.json()).then((res) => {
-    return {
-      name: res.name,
-      terrain: res.terrain,
-      climate: res.climate,
-    };
-  });
-}
+import { mapApiResponseToCharacterModalProps } from "@/lib/modal";
+import { CharacterModalProps } from "@/interfaces/CharacterModalProps";
 
 export function CharacterModal({
   characterUrl,

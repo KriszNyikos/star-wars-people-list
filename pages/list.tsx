@@ -15,7 +15,6 @@ interface ModalData {
   characterUrl: string;
 }
 
-
 export async function getServerSideProps({ query }: any) {
   const props = await getPeopleList(query);
   return { props: { ...props } };
