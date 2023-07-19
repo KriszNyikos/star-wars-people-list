@@ -19,8 +19,8 @@ Expectations:
   - [x] Card should be animated if the user hovers the mouse over.
 ---
 - Modal
-  - [ ] If we click on the card, a modal will pop up.
-  - [ ] Modal has to store personal details.
+  - [x] If we click on the card, a modal will pop up.
+  - [x] Modal has to store personal details.
 ---
 - Search
   - [x] There needs to be a search bar with a text input.

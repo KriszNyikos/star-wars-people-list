@@ -9,11 +9,9 @@ import { CharacterModal } from "@/app/components/character-modal";
 import LoadingSpinner from "@/app/components/loading-spinner";
 
 import { getPeopleList } from "@/lib/people";
+import { ModalData } from "@/interfaces/ModalData";
 
-interface ModalData {
-  isOpen: boolean;
-  characterUrl: string;
-}
+
 
 export async function getServerSideProps({ query }: any) {
   const props = await getPeopleList(query);
