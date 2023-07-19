@@ -8,58 +8,16 @@ import { createPortal } from "react-dom";
 import { CharacterModal } from "@/app/components/character-modal";
 import LoadingSpinner from "@/app/components/loading-spinner";
 
-interface modalData {
+import { getPeopleList } from "@/lib/people";
+
+interface ModalData {
   isOpen: boolean;
   characterUrl: string;
 }
 
-interface characterListData {
-  totalCount: number;
-  characterList: {
-    name: string;
-    url: string;
-    profilePictureUrl: string;
-  };
-}
-
-//TODO move to other file
-const mapApiResponseTocharacterListData = (
-  apiResponse: any
-): characterListData => {
-  return {
-    totalCount: apiResponse.count,
-    characterList: apiResponse.results.map((character: any, index: number) => {
-      return {
-        name: character.name,
-        url: character.url,
-        profilePictureUrl: `https://picsum.photos/id/${index + 1}/100/100`,
-      };
-    }),
-  };
-};
 
 export async function getServerSideProps({ query }: any) {
-  //TODO move to separate file
-  const { page, search } = query;
-  let url = "";
-  if (search) {
-    url = `https://swapi.dev/api/people?search=${search}&page=${page}`;
-  } else {
-    url = `https://swapi.dev/api/people?page=${page}`;
-  }
-
-  const response = await fetch(url);
-  const errorCode = response.ok ? false : response.status;
-  const characterListData = response.ok
-    ? await response.json().then(mapApiResponseTocharacterListData)
-    : null;
-  const props = {
-    errorCode,
-    characterListData,
-    currentPage: parseInt(page) || 1,
-    search: search || null,
-  };
-
+  const props = await getPeopleList(query);
   return { props: { ...props } };
 }
 
@@ -78,26 +36,28 @@ export default function List({
     currentPage: 1,
   });
 
-  const [modalData, setModalData] = useState<modalData>({
+  const [modalData, setModalData] = useState<ModalData>({
     isOpen: false,
     characterUrl: "",
   });
 
-  const onPageChange = (page: number) => {
-    const url = searchText
-      ? `/list?search=${searchText}&page=${page}`
+  const navigateToPage = (text: string, page: number) => {
+    const url = text
+      ? `/list?search=${text}&page=${page}`
       : `/list?page=${page}`;
     router.push(url);
     setIsLoading(true);
+  
+  }
+
+  const onPageChange = (page: number) => {
+    navigateToPage(searchText, page);
   };
 
   const onClickSubmit = () => {
-    const url = searchText
-      ? `/list?search=${searchText}&page=${1}`
-      : `/list?page=${1}`;
-    router.push(url);
-    setIsLoading(true);
-  };
+    navigateToPage(searchText, 1);
+  }
+
 
   const onClosModalHandle = () => {
     setModalData({ isOpen: false, characterUrl: "" });
