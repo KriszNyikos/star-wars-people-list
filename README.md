@@ -27,8 +27,9 @@ Expectations:
   - [x] The user can search for names with this input.
 ---
 - Optional
-  - [ ] The search bar should be extended with two dropdown list. ('/films' and '/planets')
-  - [ ] The above-mentioned dropdowns could work in one time.
+  - [x] The search bar should be extended with two dropdown list. ('/films' and '/planets')
+  - [x] The above-mentioned dropdowns could work in one time.  
+  :red_circle: Above mentioned features are partially working. The pagination does not work as expected, if we select film or planet.
   - [ ] Tests
 
 
