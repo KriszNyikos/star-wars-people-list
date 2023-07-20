@@ -10,12 +10,17 @@ import LoadingSpinner from "@/app/components/loading-spinner";
 
 import { getPeopleList } from "@/lib/people";
 import { ModalData } from "@/interfaces/ModalData";
-
-
+import { getFilmDrowDownList } from "@/lib/films";
+import { getPlanetDropDownList } from "@/lib/planets";
+import { DropDownSelector } from "@/app/components/dropdownSelector";
 
 export async function getServerSideProps({ query }: any) {
   const props = await getPeopleList(query);
-  return { props: { ...props } };
+  const films = {
+    filmsOptions: await getFilmDrowDownList(),
+  };
+  const planets = { planetOptions: await getPlanetDropDownList() };
+  return { props: { ...props, ...films, ...planets } };
 }
 
 export default function List({
@@ -23,9 +28,13 @@ export default function List({
   characterListData,
   currentPage,
   search,
+  filmsOptions,
+  planetOptions,
 }: any) {
   const router = useRouter();
   const [searchText, setSearchText] = useState("");
+  const [selectedFilmId, setSelectedFilmId] = useState("");
+  const [selectedPlanetId, setSelectedPlanetId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const [paginationState, setPaginationState] = useState({
@@ -38,23 +47,47 @@ export default function List({
     characterUrl: "",
   });
 
-  const navigateToPage = (text: string, page: number) => {
-    const url = text
-      ? `/list?search=${text}&page=${page}`
-      : `/list?page=${page}`;
-    router.push(url);
+  const navigateToPage = (
+    page: number,
+    text?: string,
+    planetId?: string,
+    filmId?: string
+  ) => {
+    const baseUrl = "/list?";
+    let urlSections = [];
+
+    if (text) {
+      urlSections.push(`search=${text}`);
+    }
+
+    if (planetId) {
+      urlSections.push(`planet=${planetId}`);
+    }
+
+    if (filmId) {
+      urlSections.push(`film=${filmId}`);
+    }
+
+    urlSections.push(`page=${page}`);
+
+    if (urlSections.length > 1) {
+      const url = baseUrl + urlSections.join("&");
+      router.push(url);
+    } else {
+      const url = baseUrl + `page=${page}`;
+      router.push(url);
+    }
+
     setIsLoading(true);
-  
-  }
+  };
 
   const onPageChange = (page: number) => {
-    navigateToPage(searchText, page);
+    navigateToPage(page, searchText, selectedPlanetId, selectedFilmId);
   };
 
   const onClickSubmit = () => {
-    navigateToPage(searchText, 1);
-  }
-
+    navigateToPage(1, searchText, selectedPlanetId, selectedFilmId);
+  };
 
   const onClosModalHandle = () => {
     setModalData({ isOpen: false, characterUrl: "" });
@@ -62,6 +95,13 @@ export default function List({
 
   const onOpenModalHandle = (url: string) => {
     setModalData({ isOpen: true, characterUrl: url });
+  };
+
+  const onFilmDropdownChange = (value: string) => {
+    setSelectedFilmId(value);
+  };
+  const onPlanetDropdownChange = (value: string) => {
+    setSelectedPlanetId(value);
   };
 
   useEffect(() => {
@@ -83,7 +123,7 @@ export default function List({
       <Head>
         <title>Star Wars Characters List</title>
       </Head>
-      <main className="flex min-h-screen flex-col items-center justify-between p-24 relative">
+      <main className="flex min-h-screen flex-col items-center justify-between p-24 relative bg-slate-500">
         {modalData.isOpen &&
           createPortal(
             <CharacterModal
@@ -92,8 +132,8 @@ export default function List({
             />,
             document.body
           )}
-        <div className="container h-100">
-          <div>
+        <div className="container h-100 bg-slate-300 rounded-md p-3">
+          <div className="flex justify-between items-center">
             <input
               onChange={(e) => setSearchText(e.target.value)}
               type="text"
@@ -102,6 +142,23 @@ export default function List({
               className="bg-gray-50 border border-gray-700 text-gray-900 focus:outline-none text-sm rounded-lg block w-1/5 p-2.5 "
               placeholder="Character name"
             />
+
+            <div className="mr-2">
+              <DropDownSelector
+                type="films"
+                items={filmsOptions}
+                onChange={onFilmDropdownChange}
+              />
+            </div>
+
+            <div>
+              <DropDownSelector
+                type="planets"
+                items={planetOptions}
+                onChange={onPlanetDropdownChange}
+              />
+            </div>
+
             <button
               onClick={onClickSubmit}
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 border border-blue-700 rounded"
@@ -110,29 +167,32 @@ export default function List({
             </button>
           </div>
 
-          <div className="flex justify-center relative">
-            {isLoading ? <LoadingSpinner/> : null}
+          <div className="flex justify-center relative rounded-md mt-2 mb-2">
+            {isLoading ? <LoadingSpinner /> : null}
             <div>
               <div className="flex flex-wrap">
                 {characterListData
-                  ? characterListData?.characterList.map((person: any, index: number) => (
-                      <div
-                        key={index}
-                        onClick={() => onOpenModalHandle(person.url)}
-                      >
-                        <Card
-                          characterName={person.name}
-                          profilePictureUrl={person.profilePictureUrl}
-                        />
-                      </div>
-                    ))
+                  ? characterListData?.characterList.map(
+                      (person: any, index: number) => (
+                        <div
+                          key={index}
+                          onClick={() => onOpenModalHandle(person.url)}
+                        >
+                          <Card
+                            characterName={person.name}
+                            profilePictureUrl={person.profilePictureUrl}
+                          />
+                        </div>
+                      )
+                    )
                   : null}
               </div>
             </div>
           </div>
 
           <div className="flex justify-center">
-            {characterListData && characterListData.characterList?.length > 0 ? (
+            {characterListData &&
+            characterListData.characterList?.length > 0 ? (
               <Pagination
                 count={paginationState.count}
                 currentPage={paginationState.currentPage}
