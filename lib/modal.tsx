@@ -1,8 +1,9 @@
 import { CharacterModalProps } from "@/interfaces/CharacterModalProps";
 import { HomeWorld } from "@/interfaces/Homeworld";
+import { PeopleFromAPI } from "@/interfaces/PeopleApiResponse";
 
 export const mapApiResponseToCharacterModalProps = async (
-  character: any
+  character: PeopleFromAPI
 ):  Promise<CharacterModalProps> => {
 
   const homeWorldData = await getHomeworldData(character.homeworld)
@@ -16,8 +17,8 @@ export const mapApiResponseToCharacterModalProps = async (
   };
 };
 
-const getHomeworldData = async (homeworldUrls: string): Promise<HomeWorld> => {
-  return fetch(homeworldUrls).then((res) => res.json()).then((res) => {
+const getHomeworldData = async (homeworldUrl: string): Promise<HomeWorld> => {
+  return fetch(homeworldUrl).then((res) => res.json()).then((res) => {
     return {
       name: res.name,
       terrain: res.terrain,

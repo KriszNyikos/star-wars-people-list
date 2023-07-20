@@ -6,21 +6,41 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { createPortal } from "react-dom";
 import { CharacterModal } from "@/app/components/character-modal";
+
 import LoadingSpinner from "@/app/components/loading-spinner";
+import NotFoundCharacter from "@/app/components/not-found-character";
 
-import { getPeopleList } from "@/lib/people";
+import { ServerQueryParams, getPeopleList } from "@/lib/people";
 import { ModalData } from "@/interfaces/ModalData";
-import { getFilmDrowDownList } from "@/lib/films";
+import { getFilmDropDownOptionList } from "@/lib/films";
 import { getPlanetDropDownList } from "@/lib/planets";
-import { DropDownSelector } from "@/app/components/dropdownSelector";
+import { DropDownSelector } from "@/app/components/dropdown-selector";
+import {
+  CharacterListData,
+  CharacterListItem,
+} from "@/interfaces/CharacterListData";
+import { DropDownOption } from "@/interfaces/DropDownSelectorProps";
 
-export async function getServerSideProps({ query }: any) {
+export async function getServerSideProps({
+  query,
+}: {
+  query: ServerQueryParams;
+}) {
   const props = await getPeopleList(query);
   const films = {
-    filmsOptions: await getFilmDrowDownList(),
+    filmsOptions: await getFilmDropDownOptionList(),
   };
   const planets = { planetOptions: await getPlanetDropDownList() };
   return { props: { ...props, ...films, ...planets } };
+}
+
+interface FilmComponentProps {
+  errorCode: number;
+  characterListData: CharacterListData;
+  currentPage: number;
+  search: string;
+  filmsOptions: DropDownOption[];
+  planetOptions: DropDownOption[];
 }
 
 export default function List({
@@ -30,11 +50,15 @@ export default function List({
   search,
   filmsOptions,
   planetOptions,
-}: any) {
+}: FilmComponentProps) {
   const router = useRouter();
+
   const [searchText, setSearchText] = useState("");
+
   const [selectedFilmId, setSelectedFilmId] = useState("");
+
   const [selectedPlanetId, setSelectedPlanetId] = useState("");
+
   const [isLoading, setIsLoading] = useState(false);
 
   const [paginationState, setPaginationState] = useState({
@@ -121,7 +145,7 @@ export default function List({
   return (
     <>
       <Head>
-        <title>Star Wars Characters List</title>
+        <title>Star Wars Character List</title>
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-between p-24 relative bg-slate-500">
         {modalData.isOpen &&
@@ -169,11 +193,11 @@ export default function List({
 
           <div className="flex justify-center relative rounded-md mt-2 mb-2">
             {isLoading ? <LoadingSpinner /> : null}
-            <div>
+
               <div className="flex flex-wrap">
-                {characterListData
+                {characterListData && characterListData.characterList.length > 0
                   ? characterListData?.characterList.map(
-                      (person: any, index: number) => (
+                      (person: CharacterListItem, index: number) => (
                         <div
                           key={index}
                           onClick={() => onOpenModalHandle(person.url)}
@@ -185,9 +209,9 @@ export default function List({
                         </div>
                       )
                     )
-                  : null}
+                  : <NotFoundCharacter />}
               </div>
-            </div>
+            
           </div>
 
           <div className="flex justify-center">

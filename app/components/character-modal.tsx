@@ -48,19 +48,22 @@ export function CharacterModal({
             </div>
 
             <div className="mb-4 ">
-            <span className="font-semibold"> Homeworld Data </span>
+            <span className="font-semibold"> Homeworld Planet </span>
               {characterModalProps.homeWorldData && (
-                <div className="pl-4">
+                <div className="pl-4 pt-1">
                   <div className="mb-4">
-                    Planet name {characterModalProps.homeWorldData.name}
+                    <span className="font-semibold"> name </span>
+                     {characterModalProps.homeWorldData.name}
                   </div>
 
                   <div className="mb-4">
-                    Planet terrain {characterModalProps.homeWorldData.terrain}
+                  <span className="font-semibold"> terrain </span>
+                    {characterModalProps.homeWorldData.terrain}
                   </div>
 
                   <div className="mb-4">
-                    Planet climate {characterModalProps.homeWorldData.climate}
+                  <span className="font-semibold"> climate </span>
+                     {characterModalProps.homeWorldData.climate}
                   </div>
                 </div>
               )}{" "}

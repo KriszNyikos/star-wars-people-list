@@ -1,6 +1,12 @@
+
+export interface DropDownOption{
+    name: string,
+    id: string
+}
+
 export interface DropDownSelectorProps {
-    items: Array<{name: string, id: string}>;
+    items: DropDownOption[];
     type: string;
-    onChange: (e: any) => void;
+    onChange: (e: string) => void;
 }
    
