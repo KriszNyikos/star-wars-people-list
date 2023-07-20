@@ -7,15 +7,15 @@ import { PeopleServerProps } from "@/interfaces/PeopleServerProps";
 
 export interface ServerQueryParams {
   page: string;
-  search: string;
-  planet: string;
-  film: string;
+  search: string | null;
+  planet: string | null;
+  film: string | null;
 }
 
 const filterPeople = (
   people: PeopleFromAPI[],
-  planet: string,
-  film: string
+  planet: string | null,
+  film: string | null
 ) => {
   return people.filter((person: PeopleFromAPI) => {
     if (
